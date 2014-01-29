@@ -547,5 +547,21 @@ int xsize = 10;
 // ganho 500
 #endif
 
+//// 29 Ball and Beam Digital Controller IV - Proj Emulaçao
+#if TESTCASE == 29
+#ifndef FILTERTYPE
+#define FILTERTYPE	DIRECTFORMI
+#endif
+#define FXP_PRECISION	5
+#define FXP_IWIDTH		2
+float a[] = {0.01f,  -0.28f,   0.26f, -0.08f};
+float b[] = {1.0f,  -2.57f,   2.18f, -0.60f};
+int Na = 4; int Nb = 4;
+float max = 1.0f; float min = -1.0f;
+int xsize = 10;
+
+//ganho 500
+#endif
+
 
 #endif /* VERIFICATIONFXP_H_ */

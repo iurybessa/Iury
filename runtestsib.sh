@@ -3,7 +3,7 @@
 # Script to automate running filter verification
 
 # TEST TYPES: overflow, limitcycle, timing, error, magnitude, phase, stability.
-testtypes=( overflow error stability magnitude phase )
+testtypes=( overflow error stability timing limitcycle magnitude phase )
 for testtype in ${testtypes[@]} 
 do
 echo "======== Running filter verification - $testtype - Cases 1 to 3 ========"
@@ -27,7 +27,7 @@ echo "======== Running filter verification - $testtype - Cases 1 to 3 ========"
 mkdir logs_"$testtype"
 	
 tcmin=21
-tcmax=28
+tcmax=29
 
 # Loop on test cases
 for i in `seq $tcmin $tcmax`
@@ -77,9 +77,28 @@ do
 	    		{ time ./esbmc verify_error.c \
 	    		-DTESTCASE=$i -DFILTERTYPE=$j \
 	    		--no-bounds-check --no-pointer-check --no-div-by-zero-check --z3-bv \
-	    		--timeout 1h \
+	    		--timeout 2h \
 	    		> logs_"$testtype"/log_"$testtype"_c"$i"_t"$j".txt ;
 			} 2>> logs_"$testtype"/log_"$testtype"_c"$i"_t"$j".txt
+
+
+		elif [ "$testtype" == "magnitude" ]; then
+	    		echo "=============== VERIFY: $testtype - CASE $i ==============="
+	    		{ time ./esbmc verify_freqz.c \
+	    		-DTESTCASE=$i \
+	    		--timeout 1h \
+	    		--fixedbv \
+	    		> logs_"$testtype"/log_"$testtype"_c"$i".txt ;
+	    		} 2>> logs_"$testtype"/log_"$testtype"_c"$i".txt
+
+		elif [ "$testtype" == "phase" ]; then
+	    		echo "=============== VERIFY: $testtype - CASE $i ==============="
+	    		{ time ./esbmc verify_freqz.c --function phase\
+	    		-DTESTCASE=$i \
+	    		--timeout 1h \
+	    		--fixedbv \
+	    		> logs_"$testtype"/log_"$testtype"_c"$i".txt ;
+	    		} 2>> logs_"$testtype"/log_"$testtype"_c"$i".txt
 
 
 		else
